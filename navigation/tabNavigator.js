@@ -5,6 +5,10 @@ const Tab = createBottomTabNavigator()
 export default class TabNavigator extends React.Component{
     render(){
         return(
+            <Tab.Navigator>
+                <Tab.Screen name={'transaction'}/>
+                <Tab.Screen name={'search'}/>
+            </Tab.Navigator>
             
         )
     }
