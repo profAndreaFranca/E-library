@@ -6,7 +6,7 @@ export default class Transaction extends React.Component{
     render(){
         return(
             <View style={styles.container}>
-                <Text>
+                <Text style={{fontSize:20}}>
                     Transaction
                 </Text>
             </View>
