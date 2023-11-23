@@ -25,10 +25,16 @@ export default class Transaction extends React.Component{
         })
     }
     render(){
+        const{
+            domState,
+            hasCameraPermissions,
+            scannerData,
+            scanned,
+        }= this.state
         return(
             <View style={styles.container}>
-                <Text style={{fontSize:20}}>
-                    Transaction
+                <Text style={styles.text}>
+                    {hasCameraPermissions? scannerData: "Solicitar permissão da camera"}
                 </Text>
                 <TouchableOpacity
                     onPress={()=> this.getCameraPermission("scanner")}
