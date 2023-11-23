@@ -50,13 +50,14 @@ export default class Transaction extends React.Component{
         }
         return(
             <View style={styles.container}>
-                <Text style={styles.text}>
+                <Text style={styles.buttomText}>
                     {hasCameraPermissions? scannerData: "Solicitar permissão da camera"}
                 </Text>
                 <TouchableOpacity
+                style={styles.buttom}
                     onPress={()=> this.getCameraPermission("scanner")}
                 >
-                    <Text>Digitalizar QRCode</Text>
+                    <Text style={styles.buttomText}>Digitalizar QRCode</Text>
                 </TouchableOpacity>
             </View>
         )
@@ -69,5 +70,17 @@ const styles = StyleSheet.create({
         justifyContent:"center",
         alignItems:"center",
         backgroundColor:"#5654d9"
+    },
+    buttom:{
+        width:'43%',
+        height:55,
+        justifyContent:"center",
+        alignItems: "center",
+        backgroundColor: "#f48d20", 
+        borderRadius:15
+    },
+    buttomText:{
+        fontSize:15,
+        color:"#fff"
     }
 })
