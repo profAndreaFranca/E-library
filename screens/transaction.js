@@ -24,6 +24,15 @@ export default class Transaction extends React.Component{
             scanned:false
         })
     }
+    handlebarCodeScanner = async ({type,data}) => {
+
+        this.setState({
+            scannerData: data,
+            donState: 'normal',
+            scanned: true,
+        })
+
+    }
     render(){
         const{
             domState,
