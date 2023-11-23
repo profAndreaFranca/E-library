@@ -40,6 +40,14 @@ export default class Transaction extends React.Component{
             scannerData,
             scanned,
         }= this.state
+        if(domState == "scanner"){
+            return(
+                <BarCodeScanner
+                onBarCodeScanned = {scanned?undefined: this.handlebarCodeScanner}
+                style = {StyleSheet.absoluteFillObject}
+                />
+            )
+        }
         return(
             <View style={styles.container}>
                 <Text style={styles.text}>
