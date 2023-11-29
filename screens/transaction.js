@@ -42,15 +42,19 @@ export default class Transaction extends React.Component {
     }
     return (
       <View style={styles.container}>
-        <Text style={styles.buttomText}>
-          {hasCameraPermissions ? scannerData : "Solicitar permissão da camera"}
-        </Text>
-        <TouchableOpacity
-          style={styles.buttom}
-          onPress={() => this.getCameraPermission("scanner")}
-        >
-          <Text style={styles.buttomText}>Digitalizar QRCode</Text>
-        </TouchableOpacity>
+<View style = {styles.textinputContainer}>
+<TextInput
+style = {styles.textinput}
+placeholder = {"id do aluno"}
+placeholderTextColor = {"#fff"}
+value = {studentId}
+/>
+<TouchableOpacity style={styles.scanButton} onPress = {()=>this.getCameraPermission("studentId")}>
+<Text style = {styles.scanbuttonText}>
+  scan
+</Text>
+</TouchableOpacity>
+</View>
       </View>
     );
   }
