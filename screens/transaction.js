@@ -46,7 +46,7 @@ export default class Transaction extends React.Component {
   }
   };
   render() {
-    const { domState, hasCameraPermissions, scannerData, scanned } = this.state;
+    const { domState, hasCameraPermissions, scannerData, scanned, bookId, studentId } = this.state;
     if (domState == "scanner") {
       return (
         <BarCodeScanner
@@ -57,6 +57,7 @@ export default class Transaction extends React.Component {
     }
     return (
       <View style={styles.container}>
+        <ImageBackground style = {styles.bgImage} source = {bgimage}>
 <View style = {styles.textinputContainer}>
 <TextInput
 style = {styles.textinput}
@@ -69,7 +70,19 @@ value = {studentId}
   scan
 </Text>
 </TouchableOpacity>
+<TextInput
+style = {styles.textinput}
+placeholder = {"id do livro"}
+placeholderTextColor = {"#fff"}
+value = {bookId}
+/>
+<TouchableOpacity style={styles.scanButton} onPress = {()=>this.getCameraPermission("bookId")}>
+<Text style = {styles.scanbuttonText}>
+  scan
+</Text>
+</TouchableOpacity>
 </View>
+</ImageBackground>
       </View>
     );
   }
