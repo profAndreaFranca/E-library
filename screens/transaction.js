@@ -1,9 +1,16 @@
 import React from "react";
-import { Text, View, StyleSheet, TouchableOpacity,TextInput,ImageBackground } from "react-native";
+import {
+  Text,
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  TextInput,
+  ImageBackground,
+} from "react-native";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import * as Permissions from "expo-permissions";
 
-const bgimage =require("../assets/background2.png")
+const bgimage = require("../assets/background2.png");
 
 export default class Transaction extends React.Component {
   constructor() {
@@ -13,10 +20,8 @@ export default class Transaction extends React.Component {
       hasCameraPermissions: null, //verifica se tem permissão para usar a camera
       scanned: false, //ja fez o scanner ou não
       scannerData: "", //receber o dado escaneado
-      bookId:"",
-      studentId:"",
-
-
+      bookId: "",
+      studentId: "",
     };
   }
 
@@ -30,23 +35,30 @@ export default class Transaction extends React.Component {
     });
   };
   handlebarCodeScanner = async ({ type, data }) => {
-    const {domState} = this.state
-    if(domState == 'bookId'){  
+    const { domState } = this.state;
+    if (domState == "bookId") {
       this.setState({
         bookId: data,
         donState: "normal",
         scanned: true,
-    });
-  } else if (domState == 'studentId'){
-    this.setState({
-      studentId: data,
-      donState: "normal",
-      scanned: true,
-    });
-  }
+      });
+    } else if (domState == "studentId") {
+      this.setState({
+        studentId: data,
+        donState: "normal",
+        scanned: true,
+      });
+    }
   };
   render() {
-    const { domState, hasCameraPermissions, scannerData, scanned, bookId, studentId } = this.state;
+    const {
+      domState,
+      hasCameraPermissions,
+      scannerData,
+      scanned,
+      bookId,
+      studentId,
+    } = this.state;
     if (domState == "scanner") {
       return (
         <BarCodeScanner
@@ -57,32 +69,34 @@ export default class Transaction extends React.Component {
     }
     return (
       <View style={styles.container}>
-        <ImageBackground style = {styles.bgImage} source = {bgimage}>
-<View style = {styles.textinputContainer}>
-<TextInput
-style = {styles.textinput}
-placeholder = {"id do aluno"}
-placeholderTextColor = {"#fff"}
-value = {studentId}
-/>
-<TouchableOpacity style={styles.scanButton} onPress = {()=>this.getCameraPermission("studentId")}>
-<Text style = {styles.scanbuttonText}>
-  scan
-</Text>
-</TouchableOpacity>
-<TextInput
-style = {styles.textinput}
-placeholder = {"id do livro"}
-placeholderTextColor = {"#fff"}
-value = {bookId}
-/>
-<TouchableOpacity style={styles.scanButton} onPress = {()=>this.getCameraPermission("bookId")}>
-<Text style = {styles.scanbuttonText}>
-  scan
-</Text>
-</TouchableOpacity>
-</View>
-</ImageBackground>
+        <ImageBackground style={styles.bgImage} source={bgimage}>
+          <View style={styles.textinputContainer}>
+            <TextInput
+              style={styles.textinput}
+              placeholder={"id do aluno"}
+              placeholderTextColor={"#fff"}
+              value={studentId}
+            />
+            <TouchableOpacity
+              style={styles.scanButton}
+              onPress={() => this.getCameraPermission("studentId")}
+            >
+              <Text style={styles.scanbuttonText}>scan</Text>
+            </TouchableOpacity>
+            <TextInput
+              style={styles.textinput}
+              placeholder={"id do livro"}
+              placeholderTextColor={"#fff"}
+              value={bookId}
+            />
+            <TouchableOpacity
+              style={styles.scabutton}
+              onPress={() => this.getCameraPermission("bookId")}
+            >
+              <Text style={styles.scanbuttonText}>scan</Text>
+            </TouchableOpacity>
+          </View>
+        </ImageBackground>
       </View>
     );
   }
@@ -92,6 +106,26 @@ const styles = StyleSheet.create({
     container: {
       flex: 1,
       backgroundColor: "#FFFFFF"
+    },
+    bgImage: {
+      flex: 1,
+      resizeMode: "cover",
+      justifyContent: "center"
+    },
+    upperContainer: {
+      flex: 0.5,
+      justifyContent: "center",
+      alignItems: "center"
+    },
+    appIcon: {
+      width: 200,
+      height: 200,
+      resizeMode: "contain",
+      marginTop: 80
+    },
+    appName: {
+      width: 180,
+      resizeMode: "contain"
     },
     lowerContainer: {
       flex: 0.5,
@@ -125,9 +159,7 @@ const styles = StyleSheet.create({
       alignItems: "center"
     },
     scanbuttonText: {
-      fontSize: 24,
+      fontSize: 20,
       color: "#0A0101",
     }
-   
-     
-   });
+  });
