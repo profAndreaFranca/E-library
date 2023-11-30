@@ -24,11 +24,20 @@ export default class Transaction extends React.Component {
     });
   };
   handlebarCodeScanner = async ({ type, data }) => {
+    const {domState} = this.state
+    if(domState == 'bookId'){  
+      this.setState({
+        bookId: data,
+        donState: "normal",
+        scanned: true,
+    });
+  } else if (domState == 'studentId'){
     this.setState({
-      scannerData: data,
+      studentId: data,
       donState: "normal",
       scanned: true,
     });
+  }
   };
   render() {
     const { domState, hasCameraPermissions, scannerData, scanned } = this.state;
