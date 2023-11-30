@@ -1,7 +1,9 @@
 import React from "react";
-import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
+import { Text, View, StyleSheet, TouchableOpacity,TextInput,ImageBackground } from "react-native";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import * as Permissions from "expo-permissions";
+
+const bgimage =require("../assets/background2.png")
 
 export default class Transaction extends React.Component {
   constructor() {
@@ -11,6 +13,10 @@ export default class Transaction extends React.Component {
       hasCameraPermissions: null, //verifica se tem permissão para usar a camera
       scanned: false, //ja fez o scanner ou não
       scannerData: "", //receber o dado escaneado
+      bookId:"",
+      studentId:"",
+
+
     };
   }
 
