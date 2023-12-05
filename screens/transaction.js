@@ -10,6 +10,7 @@ import {
 import { BarCodeScanner } from "expo-barcode-scanner";
 import * as Permissions from "expo-permissions";
 import { Image } from "react-native";
+import db from "../config"
 
 const bgImage = require("../assets/background2.png");
 const appIcon = require("../assets/appIcon.png");
@@ -37,6 +38,7 @@ export default class Transaction extends React.Component {
       scanned: false,
     });
   };
+
   handlebarCodeScanner = async ({ type, data }) => {
     const { domState } = this.state;
     if (domState == "bookId") {
@@ -53,6 +55,12 @@ export default class Transaction extends React.Component {
       });
     }
   };
+
+  handleTransaction = ()=>{ //gerenciar as transações
+
+  }
+
+
   render() {
     const {
       domState,
@@ -106,6 +114,12 @@ export default class Transaction extends React.Component {
                 <Text style={styles.scanButtonText}>scan</Text>
               </TouchableOpacity>
             </View>
+            <TouchableOpacity
+              style = {[styles.button,{marginTop:25}]}
+              onPress = {()=> this.handleTransaction()}
+            >
+              <Text style={styles.buttonText}>Enviar</Text>
+            </TouchableOpacity>
           </View>
         </ImageBackground>
       </View>
@@ -173,4 +187,17 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: "#0A0101",
   },
+  button: {
+    width: "43%",
+    height: 55,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#F48D20",
+    borderRadius: 15
+  },
+  buttonText: {
+    fontSize: 24,
+    color: "#FFFFFF",
+    // fontFamily: "Rajdhani_600SemiBold"
+  }
 });

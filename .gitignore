@@ -33,3 +33,29 @@ yarn-error.*
 
 # typescript
 *.tsbuildinfo
+
+# Created by https://www.toptal.com/developers/gitignore/api/visualstudiocode,windows,reactnative,firebase
+# Edit at https://www.toptal.com/developers/gitignore?templates=visualstudiocode,windows,reactnative,firebase
+
+### Firebase ###
+.idea
+**/node_modules/*
+**/.firebaserc
+
+### Firebase Patch ###
+.runtimeconfig.json
+.firebase/
+config.js
+
+### ReactNative ###
+# React Native Stack Base
+
+.expo
+__generated__
+
+### ReactNative.Android Stack ###
+# Gradle files
+.gradle/
+build/
+
+
