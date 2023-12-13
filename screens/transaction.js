@@ -7,6 +7,7 @@ import {
   TextInput,
   ImageBackground,
   Alert,
+  KeyboardAvoidingView,
 } from "react-native";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import * as Permissions from "expo-permissions";
@@ -75,15 +76,16 @@ export default class Transaction extends React.Component {
       .then((doc) => {
         var book = doc.data();
         if (book.is_book_available) {
-          this.initiateBookIssue(bookId,studentId,bookName,studentName);
-          Alert.alert("Voce retirou o livro com sucesso!")
+          this.initiateBookIssue(bookId, studentId, bookName, studentName);
+          Alert.alert("Voce retirou o livro com sucesso!");
         } else {
-          this.initiateBookReturn(bookId,studentId,bookName,studentName);
+          this.initiateBookReturn(bookId, studentId, bookName, studentName);
           Alert.alert("O livro foi devolvido com sucesso!");
         }
       });
   };
 
+  //pegando mais detalhes do livro
   getBookDatails = (bookId) => {
     bookId = bookId.trim().toLowerCase();
     db.collection("books")
@@ -96,6 +98,7 @@ export default class Transaction extends React.Component {
       });
   };
 
+  //pegando mais detalhes do aluno
   getStudentDatails = (studentId) => {
     studentId = studentId.trim().toLowerCase();
     db.collection("students")
@@ -107,6 +110,23 @@ export default class Transaction extends React.Component {
         });
       });
   };
+
+  //checando a disponibilidade do livro
+  checkBookAvailability = async (bookId)=>{
+    const bookRef = await db.collection("books").where("book_id","==",bookId).get()
+
+    var transactionType = ""
+    if(bookRef.docs.length == 0){
+      transactionType = false
+    }else{
+      bookRef.docs.map(doc=>{
+        //condição ? verdadeiro : falso
+        transactionType = doc.data().is_book_available ? "issue" : "return"
+      })
+    }
+
+    return transactionType
+  }
 
   //criar função para retirada - Francesco - 1
   initiateBookIssue = (bookId, studentId, bookName, studentName) => {
@@ -140,7 +160,6 @@ export default class Transaction extends React.Component {
   };
 
   //criar função para devolução - Alexandre - 2
-
   initiateBookReturn = (bookId, studentId, bookName, studentName) => {
     //adicionar nova transação
     db.collection("transactions").add({
@@ -164,12 +183,12 @@ export default class Transaction extends React.Component {
         number_of_books_issued: firebase.firestore.FieldValue.increment(-1),
       });
 
-    //João Pedro editar os textImput - 3
     this.setState({
       bookId: "",
       studentId: "",
     });
   };
+
   render() {
     const {
       domState,
@@ -188,7 +207,7 @@ export default class Transaction extends React.Component {
       );
     }
     return (
-      <View style={styles.container}>
+      <KeyboardAvoidingView behavior="padding" style={styles.container}>
         <ImageBackground style={styles.bgImage} source={bgImage}>
           <View style={styles.upperContainer}>
             <Image source={appIcon} style={styles.appIcon} />
@@ -241,7 +260,7 @@ export default class Transaction extends React.Component {
             </TouchableOpacity>
           </View>
         </ImageBackground>
-      </View>
+      </KeyboardAvoidingView>
     );
   }
 }
