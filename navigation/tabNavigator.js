@@ -27,7 +27,6 @@ export default class TabNavigator extends React.Component {
           tabBarInactiveTintColor:  "#000",
           tabBarStyle:{
             height: 80,
-            // borderTopWidth: 2,
             backgroundColor: "#5653d4",
             marginTop: 2,
             marginLeft: 2,
@@ -36,7 +35,6 @@ export default class TabNavigator extends React.Component {
             borderWidth: 2,
             alignItems: "center",
             justifyContent: "center",
-            // backgroundColor: "#5653d4",
           },
           tabBarLabelStyle:{
             fontSize: 20,
