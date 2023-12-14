@@ -70,19 +70,25 @@ export default class Transaction extends React.Component {
 
     var { studentName, bookName } = this.state;
 
-    db.collection("books")
-      .doc(bookId)
-      .get()
-      .then((doc) => {
-        var book = doc.data();
-        if (book.is_book_available) {
-          this.initiateBookIssue(bookId, studentId, bookName, studentName);
-          Alert.alert("Voce retirou o livro com sucesso!");
-        } else {
-          this.initiateBookReturn(bookId, studentId, bookName, studentName);
-          Alert.alert("O livro foi devolvido com sucesso!");
-        }
+    var transactionType = this.checkBookAvailability(bookId);
+    if (!transactionType) {
+      //se o transactionType for falso
+      this.setState({
+        bookId: "",
+        studentId: "",
       });
+      Alert.alert("O livro não existe");
+    }
+    //se o transactionType for issue
+    else if (transactionType == "issue") {
+      this.initiateBookIssue(bookId, studentId, bookName, studentName);
+      Alert.alert("Voce retirou o livro com sucesso!");
+    }
+    //se o transactionType for return
+    else if (transactionType == "return") {
+      this.initiateBookReturn(bookId, studentId, bookName, studentName);
+      Alert.alert("O livro foi devolvido com sucesso!");
+    }
   };
 
   //pegando mais detalhes do livro
@@ -112,21 +118,24 @@ export default class Transaction extends React.Component {
   };
 
   //checando a disponibilidade do livro
-  checkBookAvailability = async (bookId)=>{
-    const bookRef = await db.collection("books").where("book_id","==",bookId).get()
+  checkBookAvailability = async (bookId) => {
+    const bookRef = await db
+      .collection("books")
+      .where("book_id", "==", bookId)
+      .get();
 
-    var transactionType = ""
-    if(bookRef.docs.length == 0){
-      transactionType = false
-    }else{
-      bookRef.docs.map(doc=>{
+    var transactionType = "";
+    if (bookRef.docs.length == 0) {
+      transactionType = false;
+    } else {
+      bookRef.docs.map((doc) => {
         //condição ? verdadeiro : falso
-        transactionType = doc.data().is_book_available ? "issue" : "return"
-      })
+        transactionType = doc.data().is_book_available ? "issue" : "return";
+      });
     }
 
-    return transactionType
-  }
+    return transactionType; //false | issue | return
+  };
 
   //criar função para retirada - Francesco - 1
   initiateBookIssue = (bookId, studentId, bookName, studentName) => {
