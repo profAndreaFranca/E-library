@@ -8,6 +8,8 @@ import {
   ImageBackground,
   Alert,
   KeyboardAvoidingView,
+  Platform,
+  ToastAndroid,
 } from "react-native";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import * as Permissions from "expo-permissions";
@@ -77,17 +79,30 @@ export default class Transaction extends React.Component {
         bookId: "",
         studentId: "",
       });
-      Alert.alert("O livro não existe");
+      if (Platform.OS == "android") {
+        ToastAndroid.show("O livro não existe",ToastAndroid.SHORT)
+      } else {
+        Alert.alert("O livro não existe");
+      }
+      
     }
     //se o transactionType for issue
     else if (transactionType == "issue") {
       this.initiateBookIssue(bookId, studentId, bookName, studentName);
-      Alert.alert("Voce retirou o livro com sucesso!");
+      if (Platform.OS == "android") {
+        ToastAndroid.show("Voce retirou o livro com sucesso!",ToastAndroid.SHORT)
+      } else {
+        Alert.alert("Voce retirou o livro com sucesso!");
+      }
     }
     //se o transactionType for return
     else if (transactionType == "return") {
       this.initiateBookReturn(bookId, studentId, bookName, studentName);
-      Alert.alert("O livro foi devolvido com sucesso!");
+      if (Platform.OS == "android") {
+        ToastAndroid.show("O livro foi devolvido com sucesso!",ToastAndroid.SHORT)
+      } else {
+        Alert.alert("O livro foi devolvido com sucesso!");
+      }
     }
   };
 
