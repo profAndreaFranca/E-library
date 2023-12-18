@@ -10,10 +10,10 @@ import {
   KeyboardAvoidingView,
   Platform,
   ToastAndroid,
+  Image
 } from "react-native";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import * as Permissions from "expo-permissions";
-import { Image } from "react-native";
 import db from "../config";
 import firebase from "firebase";
 
@@ -112,7 +112,7 @@ export default class Transaction extends React.Component {
       }
     }
   };
-
+//Alexandre
   //pegando mais detalhes do livro
   getBookDatails = (bookId) => {
     bookId = bookId.trim().toLowerCase();
