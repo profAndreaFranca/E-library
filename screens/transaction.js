@@ -63,18 +63,18 @@ export default class Transaction extends React.Component {
     }
   };
 
-  //Iago - 4
+  //gerenciar as transações
   handleTransaction = async () => {
-    //gerenciar as transações
     var { bookId, studentId } = this.state;
+    //obtendo os detalhes
     await this.getBookDatails(bookId);
     await this.getStudentDatails(studentId);
-
     var { studentName, bookName } = this.state;
 
+    //verificando a disponibilidade do livro
     var transactionType = this.checkBookAvailability(bookId);
+    //se o transactionType for falso o livro não existe
     if (!transactionType) {
-      //se o transactionType for falso
       this.setState({
         bookId: "",
         studentId: "",
@@ -86,8 +86,14 @@ export default class Transaction extends React.Component {
       }
       
     }
-    //se o transactionType for issue
+    //se o transactionType for issue o livro está disponível
     else if (transactionType == "issue") {
+      //antes de iniciar a retirada é necessário verificar a elegibilidade do aluno
+      //Chamaremos a função checkStudentEligibilityForBookIssue() antes
+      // que o livro seja emitido e armazenaremos a
+      // elegibilidade do aluno dentro da variável "isEligible"
+      // Então, só executaremos o código para emitir
+      // o livro se o valor de isEligible for verdadeiro.
       this.initiateBookIssue(bookId, studentId, bookName, studentName);
       if (Platform.OS == "android") {
         ToastAndroid.show("Voce retirou o livro com sucesso!",ToastAndroid.SHORT)
@@ -95,8 +101,9 @@ export default class Transaction extends React.Component {
         Alert.alert("Voce retirou o livro com sucesso!");
       }
     }
-    //se o transactionType for return
+    //se o transactionType for return o livro está emprestado
     else if (transactionType == "return") {
+      //antes de iniciar a devolução é necessário verificar a elegibilidade do aluno
       this.initiateBookReturn(bookId, studentId, bookName, studentName);
       if (Platform.OS == "android") {
         ToastAndroid.show("O livro foi devolvido com sucesso!",ToastAndroid.SHORT)
@@ -152,7 +159,7 @@ export default class Transaction extends React.Component {
     return transactionType; //false | issue | return
   };
 
-  //criar função para retirada - Francesco - 1
+  //função para retirada 
   initiateBookIssue = (bookId, studentId, bookName, studentName) => {
     //adicionar nova transação
     db.collection("transactions").add({
@@ -183,7 +190,7 @@ export default class Transaction extends React.Component {
     });
   };
 
-  //criar função para devolução - Alexandre - 2
+  //função para devolução
   initiateBookReturn = (bookId, studentId, bookName, studentName) => {
     //adicionar nova transação
     db.collection("transactions").add({
@@ -212,6 +219,32 @@ export default class Transaction extends React.Component {
       studentId: "",
     });
   };
+
+  //checando a elegibilidade do aluno para retirada
+  checkStudentEligibilityForBookIssue = () =>{
+    //Precisamos verificar se o ID do aluno existe no banco de dados:
+
+    // ● Se existir, precisamos verificar se o aluno retirou mais de dois livros.
+    // ● Se não, retornamos verdadeiro.
+    // ● Caso contrário, retornamos falso
+
+  }
+
+  //checando a elegibilidade do aluno para devolução
+  // checkStudentEligibilityForBookReturn() exigirá
+  // que bookId e studentId sejam passados para
+  // verificar se o aluno pode devolver o livro.
+  checkStudentEligibilityForBookReturn = () =>{
+    //Precisamos verificar se o ID do aluno existe no banco de dados:
+
+    // ● Se existir, precisamos verificar se o  ID do aluno está na ultima transação 
+    // realizada para o livro em questão.
+    // ● Se não, retornamos falso. e informamos que o livro não foi retirado pelo aluno
+    // ● Caso contrário, retornamos verdadeiro
+
+
+  }
+
 
   render() {
     const {
@@ -277,7 +310,7 @@ export default class Transaction extends React.Component {
               </TouchableOpacity>
             </View>
             <TouchableOpacity
-              style={[styles.button, { marginTop: 25 }]}
+              style={[styles.button, { marginTop: 30 }]}
               onPress={() => this.handleTransaction()}
             >
               <Text style={styles.buttonText}>Enviar</Text>
@@ -324,6 +357,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     backgroundColor: "#9DFD24",
     borderColor: "#FFFFFF",
+    margin:5
   },
   textInput: {
     width: "57%",
