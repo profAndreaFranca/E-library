@@ -10,7 +10,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   ToastAndroid,
-  Image
+  Image,
 } from "react-native";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import * as Permissions from "expo-permissions";
@@ -80,11 +80,10 @@ export default class Transaction extends React.Component {
         studentId: "",
       });
       if (Platform.OS == "android") {
-        ToastAndroid.show("O livro não existe",ToastAndroid.SHORT)
+        ToastAndroid.show("O livro não existe", ToastAndroid.SHORT);
       } else {
         Alert.alert("O livro não existe");
       }
-      
     }
     //se o transactionType for issue o livro está disponível
     else if (transactionType == "issue") {
@@ -94,25 +93,38 @@ export default class Transaction extends React.Component {
       // elegibilidade do aluno dentro da variável "isEligible"
       // Então, só executaremos o código para emitir
       // o livro se o valor de isEligible for verdadeiro.
-      this.initiateBookIssue(bookId, studentId, bookName, studentName);
-      if (Platform.OS == "android") {
-        ToastAndroid.show("Voce retirou o livro com sucesso!",ToastAndroid.SHORT)
-      } else {
-        Alert.alert("Voce retirou o livro com sucesso!");
+      var isEligible = this.checkStudentEligibilityForBookIssue(bookId);
+      if (isEligible) {
+        this.initiateBookIssue(bookId, studentId, bookName, studentName);
+        if (Platform.OS == "android") {
+          ToastAndroid.show(
+            "Voce retirou o livro com sucesso!",
+            ToastAndroid.SHORT
+          );
+        } else {
+          Alert.alert("Voce retirou o livro com sucesso!");
+        }
       }
     }
     //se o transactionType for return o livro está emprestado
     else if (transactionType == "return") {
       //antes de iniciar a devolução é necessário verificar a elegibilidade do aluno
-      this.initiateBookReturn(bookId, studentId, bookName, studentName);
-      if (Platform.OS == "android") {
-        ToastAndroid.show("O livro foi devolvido com sucesso!",ToastAndroid.SHORT)
-      } else {
-        Alert.alert("O livro foi devolvido com sucesso!");
+      var isEligible = this.checkStudentEligibilityForBookReturn (bookId, studentId)
+      if (isEligible){
+        this.initiateBookReturn(bookId, studentId, bookName, studentName);
+        if (Platform.OS == "android") {
+          ToastAndroid.show(
+            "O livro foi devolvido com sucesso!",
+            ToastAndroid.SHORT
+          );
+        } else {
+          Alert.alert("O livro foi devolvido com sucesso!");
+        }
       }
+      
     }
   };
-//Alexandre
+
   //pegando mais detalhes do livro
   getBookDatails = (bookId) => {
     bookId = bookId.trim().toLowerCase();
@@ -159,7 +171,7 @@ export default class Transaction extends React.Component {
     return transactionType; //false | issue | return
   };
 
-  //função para retirada 
+  //função para retirada
   initiateBookIssue = (bookId, studentId, bookName, studentName) => {
     //adicionar nova transação
     db.collection("transactions").add({
@@ -221,30 +233,93 @@ export default class Transaction extends React.Component {
   };
 
   //checando a elegibilidade do aluno para retirada
-  checkStudentEligibilityForBookIssue = () =>{
+  checkStudentEligibilityForBookIssue = async (studentId) => {
     //Precisamos verificar se o ID do aluno existe no banco de dados:
+    const studentRef = await db
+      .collection("students")
+      .where("student_id", "==", studentId)
+      .get();
 
+    var isStudentElegible = "";
+
+    if (studentRef.docs.length == 0) {
+      this.setState({
+        bookId: "",
+        studentId: "",
+      });
+      isStudentElegible = false;
+      if (Platform.OS == "android") {
+        ToastAndroid.show(
+          "Este estudante não existe em nosso banco de dados",
+          ToastAndroid.SHORT
+        );
+      } else {
+        Alert.alert("Este estudante não existe em nosso banco de dados");
+      }
+    }
     // ● Se existir, precisamos verificar se o aluno retirou mais de dois livros.
-    // ● Se não, retornamos verdadeiro.
-    // ● Caso contrário, retornamos falso
+    else {
+      studentRef.docs.map((doc) => {
+        if (doc.data().number_of_books_issued < 2) {
+          // ● Se não, retornamos verdadeiro.
+          isStudentElegible = true;
+        } else {
+          // ● Caso contrário, retornamos falso
+          isStudentElegible = false;
+          if (Platform.OS == "android") {
+            ToastAndroid.show(
+              "Número máximo de livros atingido!",
+              ToastAndroid.SHORT
+            );
+          } else {
+            Alert.alert("Número máximo de livros atingido!");
+          }
+        }
+      });
+    }
 
-  }
+    return isStudentElegible;
+  };
 
   //checando a elegibilidade do aluno para devolução
   // checkStudentEligibilityForBookReturn() exigirá
   // que bookId e studentId sejam passados para
   // verificar se o aluno pode devolver o livro.
-  checkStudentEligibilityForBookReturn = () =>{
+  checkStudentEligibilityForBookReturn = async (bookId, studentId) => {
     //Precisamos verificar se o ID do aluno existe no banco de dados:
-
-    // ● Se existir, precisamos verificar se o  ID do aluno está na ultima transação 
+    const transactionRef = await db
+      .collection("transactions")
+      .where("book_id", "==", bookId)
+      .limit(1)
+      .get();
+    var isStudentElegible = "";
+    transactionRef.docs.map((doc) => {
+      var lastBookTransaction = doc.data();
+      if (lastBookTransaction.student_id == studentId) {
+        isStudentElegible = true;
+      } else {
+        isStudentElegible = false;
+        if (Platform.OS == "android") {
+          ToastAndroid.show(
+            "Este estudante não pode devolver esse livro",
+            ToastAndroid.SHORT
+          );
+        } else {
+          Alert.alert("Este estudante não pode devolver esse livro");
+        }
+        this.setState({
+          bookId: "",
+          studentId: ""
+        })
+      }
+      
+    });
+    return isStudentElegible
+    // ● Se existir, precisamos verificar se o  ID do aluno está na ultima transação
     // realizada para o livro em questão.
     // ● Se não, retornamos falso. e informamos que o livro não foi retirado pelo aluno
     // ● Caso contrário, retornamos verdadeiro
-
-
-  }
-
+  };
 
   render() {
     const {
@@ -357,7 +432,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     backgroundColor: "#9DFD24",
     borderColor: "#FFFFFF",
-    margin:5
+    margin: 5,
   },
   textInput: {
     width: "57%",
