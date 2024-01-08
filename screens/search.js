@@ -8,19 +8,24 @@ export default class Search extends React.Component {
     super(props);
     this.state = {
       allTransactions: [],
+      lastVisibleTransaction: null,
     };
   }
+
   componentDidMount() {
     this.getTransactions();
   }
+
   getTransactions = () => {
     db.collection("transactions")
+      .limit(10)
       .get()
       .then((snapshot) => {
         snapshot.docs.map((doc) => {
           this.setState({
             //para não criar sub arrays dentro do array
             allTransactions: [...this.state.allTransactions, doc.data()],
+            lastVisibleTransaction: doc,
           });
         });
       });
@@ -28,7 +33,7 @@ export default class Search extends React.Component {
 
   renderItem = ({ item, i }) => {
     //6 de dezembro de 2023 às 21:30:13 UTC-3
-
+   
     var date = item.date
       .toDate() //6 12 2023 às 21:30:13 UTC-3
       .toString() //"6 12 2023 às 21:30:13 UTC-3"
@@ -83,6 +88,43 @@ export default class Search extends React.Component {
         </ListItem>
       </View>
     );
+  };
+
+  fetchMoreTransactions = async (text) => {
+    var enteredText = text.toUpperCase().split(""); //[B,O,L,A]
+    var text = text.toUpperCase();
+    const{lastVisibleTransaction,allTransactions}=this. state
+    if (enteredText[0] == "B") {
+      db.collection("transactions")
+        .where("book_id", "==", text)
+        .startAfter(lastVisibleTransaction)
+        .limit(10)
+        .get()
+        .then((snapshot) => {
+          snapshot.docs.map((doc) => {
+            this.setState({
+              //para não criar sub arrays dentro do array
+              allTransactions: [...this.state.allTransactions, doc.data()],
+              lastVisibleTransaction:doc
+            });
+          });
+        });
+    } else if (enteredText[0] == "S") {
+      db.collection("transactions")
+        .where("students_id", "==", text)
+        .startAfter(lastVisibleTransaction)
+        .limit(10)
+        .get()
+        .then((snapshot) => {
+          snapshot.docs.map((doc) => {
+            this.setState({
+              //para não criar sub arrays dentro do array
+              allTransactions: [...this.state.allTransactions, doc.data()],
+              lastVisibleTransaction:doc
+            });
+          });
+        });
+    }
   };
 
   handleSearch = async (text) => {
@@ -143,6 +185,10 @@ export default class Search extends React.Component {
             data={allTransactions}
             renderItem={this.renderItem}
             keyExtractor={(item, index) => index.toString()}
+            onEndReached={() => {
+              this.fetchMoreTransactions(searchText);
+            }}
+            onEndReachedThreshold={0.7}
           />
         </View>
       </View>
