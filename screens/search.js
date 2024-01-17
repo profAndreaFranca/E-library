@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, View, StyleSheet, FlatList } from "react-native";
+import { Text, View, StyleSheet, FlatList, TextInput, TouchableOpacity } from "react-native";
 import { Avatar, ListItem, Icon } from "react-native-elements";
 import db from "../config";
 
