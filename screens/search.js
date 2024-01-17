@@ -9,6 +9,7 @@ export default class Search extends React.Component {
     this.state = {
       allTransactions: [],
       lastVisibleTransaction: null,
+      searchText:""
     };
   }
 
@@ -162,7 +163,7 @@ export default class Search extends React.Component {
     }
   };
   render() {
-    const {allTransactions} = this.state
+    const {allTransactions,searchText} = this.state
     return (
       <View style={styles.container}>
         <View style={styles.upperContainer}>
