@@ -162,6 +162,7 @@ export default class Search extends React.Component {
     }
   };
   render() {
+    const {allTransactions} = this.state
     return (
       <View style={styles.container}>
         <View style={styles.upperContainer}>
